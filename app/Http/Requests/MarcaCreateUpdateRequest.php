@@ -25,7 +25,7 @@ class MarcaCreateUpdateRequest extends FormRequest
     {
         return [
             'nome' => 'required|unique:marcas|min:3',
-            'imagem' => 'required'
+            'imagem' => 'required|file|mimes:png,jpg,jpeg'
         ];
 
         /*
@@ -41,7 +41,9 @@ class MarcaCreateUpdateRequest extends FormRequest
         return [
             'required' => 'O campo :attribute e obrigatorio',
             'nome.unique' => 'O nome da marca ja existe',
-            'nome.min' => 'O tamanho minimo para a marca e de 3 digitos'
+            'nome.min' => 'O tamanho minimo para a marca e de 3 digitos',
+            'imagem.file' => 'O campo :attribute precisa ser um arquivo',
+            'imagem.mimes' => 'O arquivo precisa ser do tipo, png, jpg ou jpeg'
         ];
     }
 
