@@ -23,8 +23,8 @@ class MarcaCreateUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        // 'nome' => 'required|unique:marcas|min:3',
         return [
-            'nome' => 'required|unique:marcas|min:3',
             'imagem' => 'required|file|mimes:png,jpg,jpeg'
         ];
 
@@ -38,10 +38,11 @@ class MarcaCreateUpdateRequest extends FormRequest
 
     public function messages()
     {
+
+        // 'nome.unique' => 'O nome da marca ja existe',
+        //            'nome.min' => 'O tamanho minimo para a marca e de 3 digitos',
         return [
             'required' => 'O campo :attribute e obrigatorio',
-            'nome.unique' => 'O nome da marca ja existe',
-            'nome.min' => 'O tamanho minimo para a marca e de 3 digitos',
             'imagem.file' => 'O campo :attribute precisa ser um arquivo',
             'imagem.mimes' => 'O arquivo precisa ser do tipo, png, jpg ou jpeg'
         ];
