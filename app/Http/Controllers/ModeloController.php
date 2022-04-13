@@ -19,9 +19,29 @@ class ModeloController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json($this->modelo->with('marca')->get(), 200);
+
+        if($request->has('atributos_marca')) {
+            $atributos_marca = $request->atributos_marca;
+            $modelos = $this->modelo->with("marca:id,{$atributos_marca}");
+        } else {
+            $modelos = $this->modelo->with('marca');
+        }
+
+        if($request->has('filtro')) {
+            $filter = explode(':', $request->filtro);
+            $modelos = $modelos->where($filter[0], $filter[1], $filter[2]);
+        }
+
+        if($request->has('atributos')) {
+            $atributos = explode(',', $request->atributos);
+            $modelos = $modelos->select($atributos)->get();
+        } else {
+            $modelos = $modelos->get();
+        }
+
+        return response()->json($modelos, 200);
         // all cria um objeto de consulta e executando ela pro get e dai retorna uma collection
         // se usa o get ele retorna a collection mas deixa modificar a consulta
     }
@@ -122,7 +142,7 @@ class ModeloController extends Controller
     public function destroy($id)
     {
         $modelo = $this->modelo->find($id);
-        if ($modelo === null){
+        if ($modelo === null) {
             return response()->json(['erro' => 'Recurso pesquisado nao existe'], 404);
         }
 
