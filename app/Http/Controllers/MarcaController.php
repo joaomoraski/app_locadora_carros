@@ -22,9 +22,40 @@ class MarcaController extends Controller
      *
      * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
-        $marcas = $this->marca->with('modelos')->get();
+        $marcas = array();
+
+        if($request->has('atributos_modelos')) { // verifica se existe o parametro de atributos_marca
+            $atributos_modelos = $request->atributos_modelos; // se existe atribui a variavel
+            // pega os modelos usando o with para pegar o id da marca e os atributos passados
+            $marcas = $this->marca->with("modelos:id,{$atributos_modelos}");
+        } else {
+            // se nao so pega tudo com todas as informacoes da marca
+            $marcas = $this->marca->with('modelos');
+        }
+
+        if($request->has('filtro')) {
+            // se tiver filtro no parametro  ?filtro=
+            // explode em : para separar e passa para o where
+            // ex: id:>:5
+            // id > 5
+            $filtros = explode(';', $request->filtro);
+            foreach ($filtros as $key => $filter) {
+                $fil = explode(':', $filter);
+                $marcas = $marcas->where($fil[0], $fil[1], $fil[2]);
+            }
+
+        }
+
+        if($request->has('atributos')) {
+            // se tem oparametro atributos ele explor em , e seleciona apenas aqueles atributos
+            $atributos = explode(',', $request->atributos);
+            $marcas = $marcas->select($atributos)->get();
+        } else {
+            $marcas = $marcas->get();
+        }
+
         return response()->json($marcas, 200);
     }
 

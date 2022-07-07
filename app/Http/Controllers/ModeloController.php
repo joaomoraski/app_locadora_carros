@@ -21,20 +21,31 @@ class ModeloController extends Controller
      */
     public function index(Request $request)
     {
-
-        if($request->has('atributos_marca')) {
-            $atributos_marca = $request->atributos_marca;
+        if($request->has('atributos_marca')) { // verifica se existe o parametro de atributos_marca
+            $atributos_marca = $request->atributos_marca; // se existe atribui a variavel
+            // pega os modelos usando o with para pegar o id da marca e os atributos passados
             $modelos = $this->modelo->with("marca:id,{$atributos_marca}");
         } else {
+            // se nao so pega tudo com todas as informacoes da marca
             $modelos = $this->modelo->with('marca');
         }
 
         if($request->has('filtro')) {
-            $filter = explode(':', $request->filtro);
-            $modelos = $modelos->where($filter[0], $filter[1], $filter[2]);
+            // se tiver filtro no parametro  ?filtro=
+            // explode em : para separar e passa para o where
+            // ex: id:>:5
+            // id > 5
+            $filtros = explode(';', $request->filtro);
+            foreach ($filtros as $key => $filter) {
+                $fil = explode(':', $filter);
+                $modelos = $modelos->where($fil[0], $fil[1], $fil[2]);
+            }
+
         }
 
         if($request->has('atributos')) {
+            // se tem oparametro atributos ele explor em , e seleciona apenas aqueles atributos
+
             $atributos = explode(',', $request->atributos);
             $modelos = $modelos->select($atributos)->get();
         } else {
