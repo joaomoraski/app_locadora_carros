@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Modelo;
+use App\Repositories\ModeloRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -21,38 +22,26 @@ class ModeloController extends Controller
      */
     public function index(Request $request)
     {
+        $modeloRepository = new ModeloRepository($this->modelo);
+
         if($request->has('atributos_marca')) { // verifica se existe o parametro de atributos_marca
-            $atributos_marca = $request->atributos_marca; // se existe atribui a variavel
+            $atributos_marca = 'marca:id,'.$request->atributos_marca; // se existe atribui a variavel
             // pega os modelos usando o with para pegar o id da marca e os atributos passados
-            $modelos = $this->modelo->with("marca:id,{$atributos_marca}");
+            $modeloRepository->selectAtributosRegistrosRelacionados($atributos_marca);
         } else {
             // se nao so pega tudo com todas as informacoes da marca
-            $modelos = $this->modelo->with('marca');
+            $modeloRepository->selectAtributosRegistrosRelacionados('marca');
         }
 
-        if($request->has('filtro')) {
-            // se tiver filtro no parametro  ?filtro=
-            // explode em : para separar e passa para o where
-            // ex: id:>:5
-            // id > 5
-            $filtros = explode(';', $request->filtro);
-            foreach ($filtros as $key => $filter) {
-                $fil = explode(':', $filter);
-                $modelos = $modelos->where($fil[0], $fil[1], $fil[2]);
-            }
-
-        }
+        if($request->has('filtro')) $modeloRepository->selectWithFilter($request->filtro);
 
         if($request->has('atributos')) {
             // se tem oparametro atributos ele explor em , e seleciona apenas aqueles atributos
-
             $atributos = explode(',', $request->atributos);
-            $modelos = $modelos->select($atributos)->get();
-        } else {
-            $modelos = $modelos->get();
+            $modeloRepository->selectFields($atributos);
         }
 
-        return response()->json($modelos, 200);
+        return response()->json($modeloRepository->getResult(), 200);
         // all cria um objeto de consulta e executando ela pro get e dai retorna uma collection
         // se usa o get ele retorna a collection mas deixa modificar a consulta
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MarcaCreateUpdateRequest;
 use App\Models\Marca;
+use App\Repositories\MarcaRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -24,39 +25,28 @@ class MarcaController extends Controller
      */
     public function index(Request $request)
     {
-        $marcas = array();
+        $marcaRepository = new MarcaRepository($this->marca);
 
         if($request->has('atributos_modelos')) { // verifica se existe o parametro de atributos_marca
-            $atributos_modelos = $request->atributos_modelos; // se existe atribui a variavel
+            $atributos_modelos = 'modelos:id,'.$request->atributos_modelos; // se existe atribui a variavel
             // pega os modelos usando o with para pegar o id da marca e os atributos passados
-            $marcas = $this->marca->with("modelos:id,{$atributos_modelos}");
+            $marcaRepository->selectAtributosRegistrosRelacionados($atributos_modelos);
         } else {
             // se nao so pega tudo com todas as informacoes da marca
-            $marcas = $this->marca->with('modelos');
+            $marcaRepository->selectAtributosRegistrosRelacionados('modelos');
         }
 
         if($request->has('filtro')) {
-            // se tiver filtro no parametro  ?filtro=
-            // explode em : para separar e passa para o where
-            // ex: id:>:5
-            // id > 5
-            $filtros = explode(';', $request->filtro);
-            foreach ($filtros as $key => $filter) {
-                $fil = explode(':', $filter);
-                $marcas = $marcas->where($fil[0], $fil[1], $fil[2]);
-            }
-
+            $marcaRepository->selectWithFilter($request->filtro);
         }
 
         if($request->has('atributos')) {
-            // se tem oparametro atributos ele explor em , e seleciona apenas aqueles atributos
+            // se tem oparametro atributos ele explode em , e seleciona apenas aqueles atributos
             $atributos = explode(',', $request->atributos);
-            $marcas = $marcas->select($atributos)->get();
-        } else {
-            $marcas = $marcas->get();
+            $marcaRepository->selectFields($atributos);
         }
 
-        return response()->json($marcas, 200);
+        return response()->json($marcaRepository->getResult(), 200);
     }
 
     /**
