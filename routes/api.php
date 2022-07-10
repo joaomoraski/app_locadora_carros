@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\ClienteController;
@@ -27,9 +28,20 @@ Route::get('/', function () {
     return ['Chegamos até aqui' => "SIM"];
 });
 
-//Route::resource('cliente' , ClienteController::class);
-Route::apiResource('cliente' , ClienteController::class);
-Route::apiResource('carro' , CarroController::class);
-Route::apiResource('locacao' , LocacaoController::class);
-Route::apiResource('marca' , MarcaController::class);
-Route::apiResource('modelo' , ModeloController::class);
+// midleware para o grupo
+
+Route::prefix('v1')->middleware('jwt.auth')->group(function($router) {
+    Route::apiResource('cliente' , ClienteController::class);
+    Route::apiResource('carro' , CarroController::class);
+    Route::apiResource('locacao' , LocacaoController::class);
+    Route::apiResource('marca' , MarcaController::class);
+    Route::apiResource('modelo' , ModeloController::class);
+
+    // rotas do jwt
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('me', [AuthController::class, 'me']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+});
+
+// rotas do jwt
+Route::post('login', [AuthController::class, 'login']);
