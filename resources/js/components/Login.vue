@@ -66,7 +66,7 @@
         },
         methods: {
             login(e) {
-                const url = "http://localhost:8000/api/login";
+                const url = "http://localhost:8002/api/login";
                 const configuracao = {
                     method: 'post',
                     body: new URLSearchParams({

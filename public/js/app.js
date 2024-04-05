@@ -5155,7 +5155,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     login: function login(e) {
-      var url = "http://localhost:8000/api/login";
+      var url = "http://localhost:8002/api/login";
       var configuracao = {
         method: 'post',
         body: new URLSearchParams({
@@ -5194,7 +5194,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      urlBase: 'http://localhost:8000/api/v1/marca',
+      urlBase: 'http://localhost:8002/api/v1/marca',
       nomeMarca: '',
       arquivoImagem: []
     };
