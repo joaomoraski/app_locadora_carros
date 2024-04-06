@@ -5223,7 +5223,7 @@ __webpack_require__.r(__webpack_exports__);
       nomeMarca: '',
       arquivoImagem: [],
       transacaoStatus: '',
-      transacaoDetalhes: []
+      transacaoDetalhes: {}
     };
   },
   // usada para recuperar o token da forma que precisamos
@@ -5271,12 +5271,16 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.post(this.urlBase, formData, config).then(function (response) {
         _this.transacaoStatus = 'adicionado';
-        _this.transacaoDetalhes = response;
-        console.log(response);
+        _this.transacaoDetalhes = {
+          mensagem: "Id do registro: " + response.data.id
+        }; // console.log(response);
       })["catch"](function (errors) {
         _this.transacaoStatus = 'erro'; // Acessamos diretamente pelo componente, por isso precisa ser um array
 
-        _this.transacaoDetalhes = errors.response; // console.log(errors.response.data.message);
+        _this.transacaoDetalhes = {
+          mensagem: errors.response.data.message,
+          dados: errors.response.data.errors
+        }; // console.log(errors.response.data.message);
       });
     }
   }
@@ -5336,7 +5340,7 @@ var render = function render() {
 
   return _c("div", {
     "class": _vm.estilo
-  }, [_vm._v("\n    " + _vm._s(_vm.titulo) + "\n    "), _c("hr"), _vm._v(" "), _vm.detalhes.data.message ? _c("span", [_vm._v(_vm._s(_vm.detalhes.data.message))]) : _vm._e(), _vm._v(" "), _vm.detalhes.data.id ? _c("br") : _vm._e(), _vm.detalhes.data.id ? _c("span", [_vm._v(_vm._s("Id do registro: " + _vm.detalhes.data.id))]) : _vm._e(), _vm._v(" "), _vm.detalhes.data.errors ? _c("ul", _vm._l(_vm.detalhes.data.errors, function (e, key) {
+  }, [_vm._v("\n    " + _vm._s(_vm.titulo) + " "), _vm._v(" "), _c("hr"), _vm._v(" "), _c("p", [_vm._v(" " + _vm._s(_vm.detalhes.mensagem) + " ")]), _vm._v(" "), _vm.detalhes.dados ? _c("ul", _vm._l(_vm.detalhes.dados, function (e, key) {
     return _c("li", {
       key: key
     }, [_vm._v("\n            " + _vm._s(e[0]) + "\n        ")]);

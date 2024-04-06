@@ -79,7 +79,7 @@ export default {
             nomeMarca: '',
             arquivoImagem: [],
             transacaoStatus: '',
-            transacaoDetalhes: [],
+            transacaoDetalhes: {},
         }
     },
 
@@ -131,13 +131,18 @@ export default {
             axios.post(this.urlBase, formData, config)
                 .then(response => {
                     this.transacaoStatus = 'adicionado'
-                    this.transacaoDetalhes = response
-                    console.log(response);
+                    this.transacaoDetalhes = {
+                        mensagem: "Id do registro: " + response.data.id
+                    }
+                    // console.log(response);
                 })
                 .catch(errors => {
                     this.transacaoStatus = 'erro'
                     // Acessamos diretamente pelo componente, por isso precisa ser um array
-                    this.transacaoDetalhes = errors.response
+                    this.transacaoDetalhes = {
+                        mensagem: errors.response.data.message,
+                        dados: errors.response.data.errors
+                    }
                     // console.log(errors.response.data.message);
                 })
         },
