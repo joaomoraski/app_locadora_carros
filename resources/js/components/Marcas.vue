@@ -25,7 +25,9 @@
                 <!-- tabelinha -->
                 <card-component titulo-card="Listagem de marcas" classes="card mt-5">
                     <template v-slot:conteudo>
-                        <tabela-listagem-component></tabela-listagem-component>
+                        <!-- v-bind entende que vc esta passando uma expressao para o campo -->
+                        <!-- se pasasr sem os : ele vai interpretar como texto -->
+                        <tabela-listagem-component :dados="marcas" :titulos="['id', 'nome', 'imagem']"></tabela-listagem-component>
                     </template>
                     <template v-slot:rodape>
                         <button type="button" class="btn btn-primary btn-sm float-end" data-bs-toggle="modal"
@@ -80,6 +82,7 @@ export default {
             arquivoImagem: [],
             transacaoStatus: '',
             transacaoDetalhes: {},
+            marcas: [],
         }
     },
 
@@ -146,6 +149,26 @@ export default {
                     // console.log(errors.response.data.message);
                 })
         },
-    }
+        listar() {
+            let config = {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': this.token,
+                }
+            }
+            axios.get(this.urlBase, config)
+                .then(response => {
+                    this.marcas = response.data;
+                    console.log(this.marcas);
+            })
+            .catch(errors => {
+                console.log(errors)
+            })
+        }
+    },
+
+    mounted() {
+        this.listar()
+    },
 }
 </script>

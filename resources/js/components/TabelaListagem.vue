@@ -2,29 +2,23 @@
     <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th class="text-uppercase" scope="col" v-for="(titulo, key) in titulos" :key="key">{{ titulo }}</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>@twitter</td>
+        <tr v-for="element in dados" :key="element.id">
+            <!-- verificar se os titulos(nome das colunas) possuem o valor passado pelo "key", que seriam as colunas do banco-->
+            <td v-if="titulos.includes(key)" v-for="(att,  key) in element" :key="key">
+                <span v-if="key === 'imagem'">
+                    <img :src="'/storage/'+att" width="40" height="40" alt="Imagem da marca">
+                </span>
+                <span v-else>
+                    {{ att }}
+                </span>
+            </td>
+<!--            <th scope="row">{{ element.id }}</th>-->
+<!--            <td>{{ element.nome }}</td>-->
+<!--            <td><img :src="'/storage/' + element.imagem" width="40" height="40"/></td>-->
         </tr>
         </tbody>
     </table>
@@ -32,6 +26,6 @@
 
 <script>
     export default {
-        props: ['prop'],
+        props: ['dados', 'titulos'],
     }
 </script>

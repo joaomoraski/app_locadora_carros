@@ -5223,7 +5223,8 @@ __webpack_require__.r(__webpack_exports__);
       nomeMarca: '',
       arquivoImagem: [],
       transacaoStatus: '',
-      transacaoDetalhes: {}
+      transacaoDetalhes: {},
+      marcas: []
     };
   },
   // usada para recuperar o token da forma que precisamos
@@ -5282,7 +5283,26 @@ __webpack_require__.r(__webpack_exports__);
           dados: errors.response.data.errors
         }; // console.log(errors.response.data.message);
       });
+    },
+    listar: function listar() {
+      var _this2 = this;
+
+      var config = {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': this.token
+        }
+      };
+      axios.get(this.urlBase, config).then(function (response) {
+        _this2.marcas = response.data;
+        console.log(_this2.marcas);
+      })["catch"](function (errors) {
+        console.log(errors);
+      });
     }
+  },
+  mounted: function mounted() {
+    this.listar();
   }
 });
 
@@ -5317,7 +5337,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['prop']
+  props: ['dados', 'titulos']
 });
 
 /***/ }),
@@ -5744,7 +5764,12 @@ var render = function render() {
     scopedSlots: _vm._u([{
       key: "conteudo",
       fn: function fn() {
-        return [_c("tabela-listagem-component")];
+        return [_c("tabela-listagem-component", {
+          attrs: {
+            dados: _vm.marcas,
+            titulos: ["id", "nome", "imagem"]
+          }
+        })];
       },
       proxy: true
     }, {
@@ -5939,49 +5964,35 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _vm._m(0);
-};
-
-var staticRenderFns = [function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
   return _c("table", {
     staticClass: "table table-hover"
-  }, [_c("thead", [_c("tr", [_c("th", {
-    attrs: {
-      scope: "col"
-    }
-  }, [_vm._v("#")]), _vm._v(" "), _c("th", {
-    attrs: {
-      scope: "col"
-    }
-  }, [_vm._v("First")]), _vm._v(" "), _c("th", {
-    attrs: {
-      scope: "col"
-    }
-  }, [_vm._v("Last")]), _vm._v(" "), _c("th", {
-    attrs: {
-      scope: "col"
-    }
-  }, [_vm._v("Handle")])])]), _vm._v(" "), _c("tbody", [_c("tr", [_c("th", {
-    attrs: {
-      scope: "row"
-    }
-  }, [_vm._v("1")]), _vm._v(" "), _c("td", [_vm._v("Mark")]), _vm._v(" "), _c("td", [_vm._v("Otto")]), _vm._v(" "), _c("td", [_vm._v("@mdo")])]), _vm._v(" "), _c("tr", [_c("th", {
-    attrs: {
-      scope: "row"
-    }
-  }, [_vm._v("2")]), _vm._v(" "), _c("td", [_vm._v("Jacob")]), _vm._v(" "), _c("td", [_vm._v("Thornton")]), _vm._v(" "), _c("td", [_vm._v("@fat")])]), _vm._v(" "), _c("tr", [_c("th", {
-    attrs: {
-      scope: "row"
-    }
-  }, [_vm._v("3")]), _vm._v(" "), _c("td", {
-    attrs: {
-      colspan: "2"
-    }
-  }, [_vm._v("Larry the Bird")]), _vm._v(" "), _c("td", [_vm._v("@twitter")])])])]);
-}];
+  }, [_c("thead", [_c("tr", _vm._l(_vm.titulos, function (titulo, key) {
+    return _c("th", {
+      key: key,
+      staticClass: "text-uppercase",
+      attrs: {
+        scope: "col"
+      }
+    }, [_vm._v(_vm._s(titulo))]);
+  }), 0)]), _vm._v(" "), _c("tbody", _vm._l(_vm.dados, function (element) {
+    return _c("tr", {
+      key: element.id
+    }, _vm._l(element, function (att, key) {
+      return _vm.titulos.includes(key) ? _c("td", {
+        key: key
+      }, [key === "imagem" ? _c("span", [_c("img", {
+        attrs: {
+          src: "/storage/" + att,
+          width: "40",
+          height: "40",
+          alt: "Imagem da marca"
+        }
+      })]) : _c("span", [_vm._v("\n                    " + _vm._s(att) + "\n                ")])]) : _vm._e();
+    }), 0);
+  }), 0)]);
+};
+
+var staticRenderFns = [];
 render._withStripped = true;
 
 
