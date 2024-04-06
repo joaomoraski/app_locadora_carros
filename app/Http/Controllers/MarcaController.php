@@ -55,9 +55,10 @@ class MarcaController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(MarcaCreateUpdateRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $request->validate($this->marca->rules(), $this->marca->feedback());
+//        $validated = $request->validated();
 
         $imagem = $request->file('imagem');
         $imagem_urn = $imagem->store('imagens', 'public');
@@ -111,6 +112,7 @@ class MarcaController extends Controller
 //            'nome' => $request->nome,
 //            'imagem' => $imagem_urn
 //        ]);
+//        return response()->json(['data' => $marca, 'message' => 'Atualização realizada sem problemas.'], 200);
         return response()->json($marca, 200);
     }
 
